@@ -1,0 +1,17 @@
+# Ignore Workspace Metadata #
+#############################
+*.metadata
+
+
+# Ignore Compiled Source #
+##########################
+#.project
+#.cproject
+*.launch
+*.axf
+*.map
+*.ld
+*.a
+*.d
+*.o
+*.mk
