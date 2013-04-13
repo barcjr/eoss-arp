@@ -11,7 +11,7 @@
 
 <project name="" update="true">
 	<setting id="all.compiler.inc">
-		<value>${workspace_loc:/SensorLib/inc}</value>
+		<value>${workspace_loc:/SensorLib/slib}</value>
         </setting>
 	<setting id="linker.libs">
 		<value>SensorLib</value>
