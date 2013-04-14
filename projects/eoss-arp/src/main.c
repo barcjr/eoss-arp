@@ -1,9 +1,9 @@
 
 /*******************************************************************************
  *
- *	Author:			Austin Schaller
- *	Module:			main.c
- *	Description:	Main entry point for eoss-arp project.
+ *  Author:         Austin Schaller
+ *  Module:         main.c
+ *  Description:    Main entry point for eoss-arp project.
  *
 *******************************************************************************/
 
@@ -30,7 +30,7 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP;
 
 int main(void)
 {
-	// TODO: Insert code here
-	
-	return 0;
+    // TODO: Insert code here
+    
+    return 0;
 }
