@@ -39,8 +39,12 @@ struct I2CPort
 
 typedef volatile struct I2CPort I2CPort;
 
-I2CPort i2c_ports[I2C_PORT_NUM] = {{.I2CReg = LPC_I2C0}, {.I2CReg = LPC_I2C1}, \
-                                   {.I2CReg = LPC_I2C2}};
+I2CPort i2c_ports[I2C_PORT_NUM] =
+{
+    {.I2CReg = LPC_I2C0},
+    {.I2CReg = LPC_I2C1},
+    {.I2CReg = LPC_I2C2}
+};
 
 
 
@@ -178,11 +182,23 @@ uint32_t I2C_GetPCLK(eI2CPort port_num)
     switch(port_num)
     {
         case I2C0:
+        {
             i2c_pclk_div = (LPC_SC->PCLKSEL0 >> 14) & 0x03;     // I2C0 PCLK
+            
+            break;
+        }
         case I2C1:
+        {
             i2c_pclk_div = (LPC_SC->PCLKSEL1 >> 6) & 0x03;      // I2C1 PCLK
+            
+            break;
+        }
         case I2C2:
+        {
             i2c_pclk_div = (LPC_SC->PCLKSEL1 >> 20) & 0x03;     // I2C2 PCLK
+            
+            break;
+        }
     }
 
     switch(i2c_pclk_div)
@@ -226,18 +242,24 @@ void I2C_SetPCLK(eI2CPort port_num, uint8_t port_setting)
             regVal = LPC_SC->PCLKSEL0;
             regVal |= ((port_setting << 14) & 0x03);        // I2C0
             LPC_SC->PCLKSEL0 = regVal;
+            
+            break;
         }
         case I2C1:
         {
             regVal = LPC_SC->PCLKSEL1;
             regVal |= ((port_setting << 6) & 0x03);         // I2C1
             LPC_SC->PCLKSEL1 = regVal;
+            
+            break;
         }
         case I2C2:
         {
             regVal = LPC_SC->PCLKSEL1;
             regVal |= ((port_setting << 20) & 0x03);        // I2C2
             LPC_SC->PCLKSEL1 = regVal;
+            
+            break;
         }
     }
 }
@@ -320,6 +342,8 @@ void I2C_Init(eI2CPort port_num, uint32_t bit_frq)
             NVIC_EnableIRQ(I2C0_IRQn);      // Install interrupt handler
             
             LPC_I2C0->I2CONSET = I2CONSET_I2EN;     // Enable I2C0
+
+            break;
         }
         case I2C1:
         {
@@ -354,6 +378,8 @@ void I2C_Init(eI2CPort port_num, uint32_t bit_frq)
             NVIC_EnableIRQ(I2C1_IRQn);      // Install interrupt handler
             
             LPC_I2C1->I2CONSET = I2CONSET_I2EN;     // Enable I2C1
+
+            break;
         }
         case I2C2:
         {
@@ -380,6 +406,8 @@ void I2C_Init(eI2CPort port_num, uint32_t bit_frq)
             NVIC_EnableIRQ(I2C2_IRQn);      // Install interrupt handler
             
             LPC_I2C2->I2CONSET = I2CONSET_I2EN;     // Enable I2C2
+
+            break;
         }
     }
 }
@@ -420,6 +448,7 @@ static void I2CIntHandler(uint8_t port_num)
             port->write_index = 0;
             port->I2CReg->I2DAT = port->master_buffer[port->write_index++];
             port->I2CReg->I2CONCLR = (I2CONCLR_SIC | I2CONCLR_STAC);        // Clear SI interrupt and STA flags
+
             break;
         }
         
@@ -433,6 +462,7 @@ static void I2CIntHandler(uint8_t port_num)
             port->read_index = 0;
             port->I2CReg->I2DAT = port->master_buffer[port->write_index++];
             port->I2CReg->I2CONCLR = (I2CONCLR_SIC | I2CONCLR_STAC);        // Clear SI interrupt and STA flags
+            
             break;
         }
         
@@ -458,6 +488,7 @@ static void I2CIntHandler(uint8_t port_num)
             }
 
             port->I2CReg->I2CONCLR = I2CONCLR_SIC;      // Clear SI interrupt flag
+            
             break;
         }
 
@@ -466,6 +497,7 @@ static void I2CIntHandler(uint8_t port_num)
          * the I2C master and slave to exit cleanly.
          */
         case 0x20:
+            break;
 
         /*
          * A data byte has been transmitted and an ACK was received. A new data
@@ -494,6 +526,7 @@ static void I2CIntHandler(uint8_t port_num)
             }
             
             port->I2CReg->I2CONCLR = I2CONCLR_SIC;      // Clear SI interrupt flag
+            
             break;
         }
 
@@ -507,6 +540,7 @@ static void I2CIntHandler(uint8_t port_num)
             port->master_state = I2C_NACK_ON_DATA;
             
             port->I2CReg->I2CONCLR = I2CONCLR_SIC;      // Clear SI interrupt flag
+            
             break;
         }
         
@@ -515,6 +549,7 @@ static void I2CIntHandler(uint8_t port_num)
          * multiple masters are not supported.
          */
         case 0x38:
+            break;
         
         /*
          * SLA+R has been transmitted and an ACK was received. Assert an ACK
@@ -545,6 +580,7 @@ static void I2CIntHandler(uint8_t port_num)
             }
             
             port->I2CReg->I2CONCLR = I2CONCLR_SIC;      // Clear SI interrupt flag
+            
             break;
         }
         
@@ -557,6 +593,7 @@ static void I2CIntHandler(uint8_t port_num)
             port->I2CReg->I2CONSET = I2CONSET_STO;      // Send STOP condition
             port->master_state = I2C_NACK_ON_ADDRESS;
             port->I2CReg->I2CONCLR = I2CONCLR_SIC;      // Clear SI interrupt flag
+            
             break;
         }
         
@@ -589,6 +626,7 @@ static void I2CIntHandler(uint8_t port_num)
             }
             
             port->I2CReg->I2CONCLR = I2CONCLR_SIC;      // Clear SI interrupt flag
+            
             break;
         }
 
@@ -603,6 +641,7 @@ static void I2CIntHandler(uint8_t port_num)
             port->master_state = I2C_OK;
             port->I2CReg->I2CONSET = I2CONSET_STO;      // Send STOP condition
             port->I2CReg->I2CONCLR = I2CONCLR_SIC;      // Clear SI interrupt flag
+            
             break;
         }
         
@@ -613,6 +652,7 @@ static void I2CIntHandler(uint8_t port_num)
         {
             port->master_state = I2C_ARBITRATION_LOST;
             port->I2CReg->I2CONCLR = I2CONCLR_SIC;      // Clear SI interrupt flag
+            
             break;
         }
     }
